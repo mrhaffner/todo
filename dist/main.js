@@ -1,1 +1,1 @@
-document.getElementById("proj_form_submit_btn").addEventListener("click",(()=>{document.getElementById("proj_title_input").value}));
+(()=>{const e={projectArr:[{name:"Default Project",id:0,tasks:[{name:"default task",projId:0,id:0},{name:"second default task",projId:0,id:1}]}]};document.getElementById("proj_form_submit_btn").addEventListener("click",(()=>{const t=document.getElementById("proj_title_input").value;let r=e.projectArr.length;var o;e.projectArr.push((o=r,{name:t,getId:()=>o,tasks:[]})),console.log(e.projectArr),console.log(e.projectArr[1].getId())}))})();
