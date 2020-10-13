@@ -8,43 +8,49 @@
 </head>
 <body>
     <div id="sidebar">
-        <div id="side_top">
-            <div id="side_title_container">
+        <div id="side_top" class="side_div">
+            <div id="side_title_div">
                 <h2 id="side_title">Projects</h2>
             </div>
-            <div id="side_project_btn_container">
-                <button id="side_project_btn">New Project</button>
+            <div id="side_proj_btn_div">
+                <button id="side_proj_btn">New Project</button>
             </div>
         </div>
-        <div id="side_project_container">
-            <div id="side_default_project_container">
-                <h3 id="side_default_project_title">Default Project</h3><!-- clicking on this should open the project in project window and maybe a dropdown -->
-                <!-- <div id="side_default_project_task_container"></div> add this later as a drop down -->
+        <div id="side_proj_div" class="side_div">
+            <div id="side_default_proj_div">
+                <h3 id="side_default_proj_title">Default Project</h3><!-- clicking on this should open the project in project window and maybe a dropdown -->
+                <!-- <div id="side_default_proj_task_div"></div> add this later as a drop down -->
+            </div>
+        </div>
+        <div id="proj_form_div" class="side_div"><!-- remove and make purely in JS -->
+            <div id="proj_form">
+                <label for="" id="proj_title_input_label">Project Title</label>
+                <input type="text" id="proj_title_input">
+                <button id="proj_form_submit_btn">Submit</button>
             </div>
         </div>
     </div>
-    <div id="project_container">
-        <div id="default_project">
-            <div id="default_project_top">
-                <div id="default_project_title_container">
-                    <h2 id="default_project_title">Default Project</h2>
+    <div id="proj_div">
+        <div id="default_proj">
+            <div id="default_proj_top">
+                <div id="default_proj_title_div">
+                    <h2 id="default_proj_title">Default Project</h2>
                 </div>
-                <div id="default_project_btn_container">
-                    <button id="default_project_btn">New Task</button>
+                <div id="default_proj_btn_div">
+                    <button id="default_proj_btn">New Task</button>
                 </div>
             </div>
-            <div id="default_project_task_container">
-                <div id="default_project_default1_task_container">
+            <div id="default_proj_task_div">
+                <div id="default_proj_default1_task_div">
                     <p>default1 task</p>
                 </div>
-                <div id="default_project_default2_task_container">
+                <div id="default_proj_default2_task_div">
                     <p>default2 task</p>
                 </div>
             </div>
         </div>
     </div>
-    <div id="project_form_container"></div><!-- add stuff here, probably remove and make purely in JS -->
-    <div id="task_form_container"></div><!-- add stuff here - will this be apart of the #project_container or generated dynamically? -->
+    <div id="task_form_div"></div><!-- add stuff here - will this be apart of the #proj_div or generated dynamically? -->
     <script src="main.js"></script>
 </body>
 </html>

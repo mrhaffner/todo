@@ -1,0 +1,1 @@
+document.getElementById("proj_form_submit_btn").addEventListener("click",(()=>{document.getElementById("proj_title_input").value}));
