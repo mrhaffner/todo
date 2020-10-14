@@ -104,9 +104,6 @@ function addProjectBtn(proj, name, id) {
     })
 };
 
-let defaultProj = document.getElementById('side_default_proj_title');
-addProjectBtn(defaultProj, 'Default Project', 0); /*probably make this so it get from the object*/
-
 function clearMain() {
     const projMain = document.getElementById('proj_div')
     while (projMain.firstChild) {
@@ -123,6 +120,7 @@ function addProjectMain(name, id) { /*get rid of the (name/id dependencies here 
                     <h2 id="${id}_proj_title">${name}</h2>
                 </div>
                 <div id="${id}_proj_btn_div">
+                    <input type="text" id="${id}_proj_task_input">
                     <button id="${id}_proj_btn">New Task</button>
                 </div>
             </div>
@@ -133,25 +131,52 @@ function addProjectMain(name, id) { /*get rid of the (name/id dependencies here 
     //function to loop through appropriate object and add all the task
     //find the object with the same id
     const taskContainer = document.getElementById(`${id}_proj_task_div`);
-    let currentProject = projectsList.projectArr.filter(obj => obj.projId === +id)[0]; //hope this works lmao
+    let currentProject = projectsList.projectArr.filter(obj => obj.projId === +id)[0];
     currentProject.tasks.forEach(task => addTaskDOM(task.name, task.taskId, id, taskContainer));
+    addTaskBtn(id, taskContainer);
 };
 
 function addTaskDOM (name, id, pId, parent) {
-    //create task container node
     let newTaskDiv = document.createElement('div');
-        //set it's id
     newTaskDiv.id = `${pId}_proj_${id}_task_div`;
-    // change inner html of task container node
     let newTask = `<p>${name}</p>`;
     newTaskDiv.innerHTML = newTask;
-    //append task container node to taskContainer
     parent.appendChild(newTaskDiv);
-}
+};
 
-// const sideNode = document.getElementById('side_proj_div');
-// let newDiv = document.createElement('div')
-// newDiv.id = `side_${id}_div`
-// let newProject = `<h3 id=side_${id}_title">${name}</h3>`;
-// newDiv.innerHTML = newProject;
-// sideNode.appendChild(newDiv);
+
+//add event listener to the btn that inputs the task in the current objects task array (runs as part of addProjectMain())
+function addTaskBtn(id, task) {
+    const taskBtn = document.getElementById(`${id}_proj_btn`)
+    taskBtn.addEventListener('click', () => {
+        console.log('hi')
+        //get value from input
+        const inputText = document.getElementById(`${id}_proj_task_input`).value;
+        //add that input to the 
+        let projIndex = projectsList.projectArr.findIndex((x) => x.projId === +id);
+        let addId = projectsList.projectArr[projIndex].currentTaskId;
+        projectsList.projectArr[projIndex].currentTaskId ++;
+        projectsList.projectArr[projIndex].tasks.push(Task(inputText, addId));
+        //run function that writes that task to the DOM
+        addTaskDOM(inputText, addId, id, task);
+    })
+}
+//create function that then writes that task to the DOM
+// function addTaskDOM(name, id) {
+
+// }
+
+// function addProjectSide(name, id) {
+//     //maybe refactor this once everything is done so that anything coming from the form is appended, but everything else can be with innerHTML
+//     const sideNode = document.getElementById('side_proj_div');
+//     let newDiv = document.createElement('div')
+//     newDiv.id = `side_${id}_div`
+//     let newProject = `<h3 id=side_${id}_title">${name}</h3>`;
+//     newDiv.innerHTML = newProject;
+//     sideNode.appendChild(newDiv);
+//     addProjectBtn(newDiv.firstChild, name, id); //might need to change this to something other than .firstChild when you reorganize the DOM tree
+//     }; 
+
+let defaultProj = document.getElementById('side_default_proj_title');
+addProjectMain('Default Project', 0);
+addProjectBtn(defaultProj, 'Default Project', 0); /*probably make this so it get from the object or not*/
