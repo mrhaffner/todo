@@ -33,30 +33,31 @@ const projectsList = (() => {
     const projectArr = [
         {
             name: 'Default Project',
-            id: 0,
+            projId: 0,
+            currentTaskId: 2,
             tasks: [
                 {
                     name: 'default task',
-                    projId: 0,
-                    id: 0,
+                    taskId: 0,
                 },
                 {
                     name: 'second default task',
-                    projId: 0,
-                    id: 1,
+                    taskId: 1,
                 },
             ]
         },
     ];
-    return { projectArr };
+    let currentId = 1;
+    return { projectArr, currentId };
 })();
 
 //factory function to create project objects
 const Project = (name, id) => {
-    const getId = () => id;
+    const projId = id;
+    const currentTaskId = 0;
     const tasks = [];
         //should you be able to change task? probably not, will change later
-    return { name, getId, tasks };
+    return { name, projId, currentTaskId, tasks };
 };
 //function to add project object to project array
 function addProject(project) {
@@ -71,13 +72,15 @@ const Task = (name, projId) => {
 //function to add task objects to an array inside of the correct project object
 
 
+
 //create a pop up form in html (then maybe eventually dynamically generate it with Javascript on new project button click)
     //probably make it pop up later in development, just have it in the sidebar for now
 const submitBtn = document.getElementById('proj_form_submit_btn');
 submitBtn.addEventListener('click', () => {
     const inputName = document.getElementById('proj_title_input').value;
-    //run a function that creates a project object with 'inputValue' as it's name/title
-    let inputId = projectsList.projectArr.length; /*This needs to change to be generated as a number 1 higher than the highest id in array once a functional delete project button is created */
+    // let inputId = projectsList.projectArr.length; /*This needs to change to be generated as a number 1 higher than the highest id in array once a functional delete project button is created */
+    let inputId = projectsList.currentId
+    projectsList.currentId ++;
     projectsList.projectArr.push(Project(inputName, inputId));
     addProjectSide(inputName, inputId);
 })
@@ -111,7 +114,6 @@ function clearMain() {
     }
 };
 
-
 function addProjectMain(name, id) { /*get rid of the (name/id dependencies here if possible - maybe get the id on click, then find the correct object and use that to populate !!!! have to do this to populate todos correctly!!!!!)*/
     const projMain = document.getElementById('proj_div')
     const projectContents = 
@@ -128,13 +130,28 @@ function addProjectMain(name, id) { /*get rid of the (name/id dependencies here 
             </div>
         </div>`
     projMain.innerHTML = projectContents
+    //function to loop through appropriate object and add all the task
+    //find the object with the same id
+    const taskContainer = document.getElementById(`${id}_proj_task_div`);
+    let currentProject = projectsList.projectArr.filter(obj => obj.projId === +id)[0]; //hope this works lmao
+    currentProject.tasks.forEach(task => addTaskDOM(task.name, task.taskId, id, taskContainer));
 };
 
-//#1 step after skeleton is complete is to generate projects objects
-    //on hitting submit, a new object will be created from a factory
-        //this will be added to a module? containing an array of objects (put a default object in at first)
-    //then add a way to find and write that object to the DOM (will remove current project from DOM as well)
-        //this will happen on button click as well
+function addTaskDOM (name, id, pId, parent) {
+    //create task container node
+    let newTaskDiv = document.createElement('div');
+        //set it's id
+    newTaskDiv.id = `${pId}_proj_${id}_task_div`;
+    // change inner html of task container node
+    let newTask = `<p>${name}</p>`;
+    newTaskDiv.innerHTML = newTask;
+    //append task container node to taskContainer
+    parent.appendChild(newTaskDiv);
+}
 
-        //write the object to the project area and the sidebar
-            //clicking it in the sidebar will call the function that clears the project area and writes that object to the DOM
+// const sideNode = document.getElementById('side_proj_div');
+// let newDiv = document.createElement('div')
+// newDiv.id = `side_${id}_div`
+// let newProject = `<h3 id=side_${id}_title">${name}</h3>`;
+// newDiv.innerHTML = newProject;
+// sideNode.appendChild(newDiv);
