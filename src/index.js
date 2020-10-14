@@ -73,21 +73,65 @@ const Task = (name, projId) => {
 
 //create a pop up form in html (then maybe eventually dynamically generate it with Javascript on new project button click)
     //probably make it pop up later in development, just have it in the sidebar for now
-    const submitBtn = document.getElementById('proj_form_submit_btn');
-    submitBtn.addEventListener('click', () => {
-        const inputName = document.getElementById('proj_title_input').value;
-        //run a function that creates a project object with 'inputValue' as it's name/title
-        let inputId = projectsList.projectArr.length; /*This needs to change to be generated as a number 1 higher than the highest id in array once a functional delete project button is created */
-        projectsList.projectArr.push(Project(inputName, inputId));
-        console.log(projectsList.projectArr)
-        console.log(projectsList.projectArr[1].getId())
-    })
+const submitBtn = document.getElementById('proj_form_submit_btn');
+submitBtn.addEventListener('click', () => {
+    const inputName = document.getElementById('proj_title_input').value;
+    //run a function that creates a project object with 'inputValue' as it's name/title
+    let inputId = projectsList.projectArr.length; /*This needs to change to be generated as a number 1 higher than the highest id in array once a functional delete project button is created */
+    projectsList.projectArr.push(Project(inputName, inputId));
+    addProjectSide(inputName, inputId);
+})
 
+function addProjectSide(name, id) {
+    //maybe refactor this once everything is done so that anything coming from the form is appended, but everything else can be with innerHTML
+    const sideNode = document.getElementById('side_proj_div');
+    let newDiv = document.createElement('div')
+    newDiv.id = `side_${id}_div`
+    let newProject = `<h3 id=side_${id}_title">${name}</h3>`;
+    newDiv.innerHTML = newProject;
+    sideNode.appendChild(newDiv);
+    addProjectBtn(newDiv.firstChild, name, id); //might need to change this to something other than .firstChild when you reorganize the DOM tree
+    }; 
+
+//this will need to run when a new project is created, but will also need to be applied to the Default Project
+function addProjectBtn(proj, name, id) {
+    proj.addEventListener('click', () => {
+        clearMain();
+        addProjectMain(name, id);
+    })
+};
+
+function clearMain() {
+    const projMain = document.getElementById('proj_div')
+    while (projMain.firstChild) {
+        projMain.removeChild(projMain.firstChild);
+    }
+};
+
+
+function addProjectMain(name, id) {
+    const projMain = document.getElementById('proj_div')
+    const projectContents = 
+        `<div id="${id}_proj">
+            <div id="${id}_proj_top">
+                <div id="${id}_proj_title_div">
+                    <h2 id="${id}_proj_title">${name}</h2>
+                </div>
+                <div id="${id}_proj_btn_div">
+                    <button id="${id}_proj_btn">New Task</button>
+                </div>
+            </div>
+            <div id="${id}_proj_task_div">
+            </div>
+        </div>`
+    projMain.innerHTML = projectContents
+};
 
 //#1 step after skeleton is complete is to generate projects objects
     //on hitting submit, a new object will be created from a factory
         //this will be added to a module? containing an array of objects (put a default object in at first)
     //then add a way to find and write that object to the DOM (will remove current project from DOM as well)
         //this will happen on button click as well
+
         //write the object to the project area and the sidebar
             //clicking it in the sidebar will call the function that clears the project area and writes that object to the DOM
