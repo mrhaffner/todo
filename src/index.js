@@ -101,6 +101,9 @@ function addProjectBtn(proj, name, id) {
     })
 };
 
+let defaultProj = document.getElementById('side_default_proj_title');
+addProjectBtn(defaultProj, 'Default Project', 0); /*probably make this so it get from the object*/
+
 function clearMain() {
     const projMain = document.getElementById('proj_div')
     while (projMain.firstChild) {
@@ -109,7 +112,7 @@ function clearMain() {
 };
 
 
-function addProjectMain(name, id) {
+function addProjectMain(name, id) { /*get rid of the (name/id dependencies here if possible - maybe get the id on click, then find the correct object and use that to populate !!!! have to do this to populate todos correctly!!!!!)*/
     const projMain = document.getElementById('proj_div')
     const projectContents = 
         `<div id="${id}_proj">
