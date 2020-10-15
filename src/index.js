@@ -52,9 +52,9 @@ function addProject(project) {
     projectsList.projectArr.push(project)
 }
 
-const Task = (name, projId) => {
-    const getProjId = () => projId;
-    return { name, getProjId };
+const Task = (name, id) => {
+    const taskId = id;
+    return { name, taskId };
 };
 
 
@@ -79,7 +79,7 @@ function addProjectSide(name, id) {
         <button id="side_${id}_delete">Delete</button>`;
     newDiv.innerHTML = newProject;
     sideNode.appendChild(newDiv);
-    addProjectBtn(newDiv.firstChild, name, id); //might need to change this to something other than .firstChild when you reorganize the DOM tree
+    addProjectBtn(newDiv.firstChild, name, id); //might need to change this to something other than .firstChild when you reorganize the DOM tree!!!!!!!
     addDeleteProj(id, newDiv)
     }; 
 
