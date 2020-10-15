@@ -1,12 +1,10 @@
 //todo properties
-    //minimum: title, description, dueDate and priority
-        //extra: notes and checklist
+    //minimum: description, dueDate and priority
 
 // separate your application logic (i.e. creating new todos, setting todos as complete, changing todo priority etc.) from the DOM-related stuff, so keep all of those things in separate modules.
 
 //UI
     //expand a single todo to see/edit its details
-    //delete a todo
 
 //Use localStorage to save user’s projects and todos between sessions.??????????????
 
@@ -18,6 +16,7 @@
     //another file holds what is loaded in the sidebar
     //another holds what is loads in current project
 
+//if main is empty (there are now projects) when you create a new project, that project should appear in main
 
 const projectsList = (() => {
     const projectArr = [
@@ -27,12 +26,18 @@ const projectsList = (() => {
             currentTaskId: 2,
             tasks: [
                 {
-                    name: 'default task',
                     taskId: 0,
+                    name: 'default task',
+                    note: 'I am a note.',
+                    dueDate: '1985',
+                    priority: '1',
                 },
                 {
-                    name: 'second default task',
                     taskId: 1,
+                    name: 'second default task',
+                    note: 'I am also a note.',
+                    dueDate: 'The Year 2000',
+                    priority: '88',
                 },
             ]
         },
@@ -70,7 +75,6 @@ submitBtn.addEventListener('click', () => {
 })
 
 function addProjectSide(name, id) {
-    //maybe refactor this once everything is done so that anything coming from the form is appended, but everything else can be with innerHTML
     const sideNode = document.getElementById('side_proj_div');
     let newDiv = document.createElement('div')
     newDiv.id = `side_${id}_div`
@@ -109,10 +113,10 @@ function clearMain() {
     }
 };
 
-function addProjectMain(name, id) { /*get rid of the (name/id dependencies here if possible - maybe get the id on click, then find the correct object and use that to populate !!!! have to do this to populate todos correctly!!!!!)*/
+function addProjectMain(name, id) { //get rid of the (name/id dependencies here if possible - maybe get the id on click, then find the correct object and use that to populate !!!! have to do this to populate todos correctly!!!!!)
     const projMain = document.getElementById('proj_div')
     const projectContents = 
-        `<div id="${id}_proj">
+        `<div id="${id}">
             <div id="${id}_proj_top">
                 <div id="${id}_proj_title_div">
                     <h2 id="${id}_proj_title">${name}</h2>
@@ -122,27 +126,16 @@ function addProjectMain(name, id) { /*get rid of the (name/id dependencies here 
                     <button id="${id}_proj_btn">New Task</button>
                 </div>
             </div>
-            <div id="${id}_proj_task_div">
+            <div id="task_container">
             </div>
         </div>`
     projMain.innerHTML = projectContents
-    const taskContainer = document.getElementById(`${id}_proj_task_div`);
-    let currentProject = projectsList.projectArr.filter(obj => obj.projId === +id)[0];
-    currentProject.tasks.forEach(task => addTaskDOM(task.name, task.taskId, id, taskContainer));
-    addTaskBtn(id, taskContainer);
+    const taskContainer = document.getElementById(`task_container`);//might not need this
+    //let currentProject = projectsList.projectArr.filter(obj => obj.projId === +id)[0];
+    //currentProject.tasks.forEach(task => addTaskDOM(task.name, task.taskId, id, taskContainer)); //this is wha tyou are replacing
+    populateTasks();
+    addTaskBtn(id, taskContainer);//become part of populate tasks
 };
-
-function addTaskDOM (name, id, pId, parent) {
-    let newTaskDiv = document.createElement('div');
-    newTaskDiv.id = `${pId}_proj_${id}_task_div`;
-    let newTask = 
-        `<p>${name}</p>
-        <button id='task_${id}_delete'>Delete</button>`;
-    newTaskDiv.innerHTML = newTask;
-    parent.appendChild(newTaskDiv);
-    addDeleteTask(id, pId);
-};
-
 
 function addTaskBtn(id, task) {
     const taskBtn = document.getElementById(`${id}_proj_btn`)
@@ -152,29 +145,103 @@ function addTaskBtn(id, task) {
         let addId = projectsList.projectArr[projIndex].currentTaskId;
         projectsList.projectArr[projIndex].currentTaskId ++;
         projectsList.projectArr[projIndex].tasks.push(Task(inputText, addId));
-        addTaskDOM(inputText, addId, id, task);
+        //addTaskDOM(inputText, addId, id, task);//also want to replace this with just populateTasks
+        //remove tasks function or just populate main or keep addTaskDom and feed the correct task into it
+        populateTasks();
     })
 }
 
-function addDeleteTask (id, pId) {
-    let taskDltBtn = document.getElementById(`task_${id}_delete`)
+
+//nothing should be fed into addTaskDom, it should read the appropariate task object and populate the tasks from there
+// let taskPId = function() {
+
+// }
+// let taskId = function() {
+    
+// }
+// let taskName = function() {
+    
+// }
+// let taskNote = function() {
+    
+// }
+// let taskDueDate = function() {
+    
+// }
+// let taskPriority = function() {
+    
+// }
+
+function getProjectNum() {
+    let projNum = document.getElementById('proj_div').firstElementChild.id;
+    let projIndex = projectsList.projectArr.findIndex((x) => x.projId === +projNum)
+    return projIndex;
+}
+
+function populateTasks() {
+    //function to remove tasks
+    //get the value of whatever the current open project is?
+    //remove
+    clearTasks();
+    projectsList.projectArr[getProjectNum()].tasks.forEach(x => addTaskDOM(x));
+}
+
+function clearTasks() {
+    const taskBox = document.getElementById('task_container')
+    while (taskBox.firstChild) {
+        taskBox.removeChild(taskBox.firstChild);
+    }
+}
+
+function addTaskDOM(task) {
+    let newTaskDiv = document.createElement('div');
+    newTaskDiv.dataset.task_id = task.taskId;//do i need this?
+    let newTask = 
+    `<p>${task.name}</p>
+    <p>${task.note}</p>
+    <p>${task.dueDate}</p>
+    <p>${task.priority}</p>
+    <button id='task_${task.taskId}_delete'>Delete</button>`;//???do I need this id?
+    newTaskDiv.innerHTML = newTask;
+    let taskDiv = document.getElementById('task_container')
+    taskDiv.appendChild(newTaskDiv);
+    addDeleteTask(task);
+}
+
+
+function addDeleteTask (task) {
+    let taskDltBtn = document.getElementById(`task_${task.taskId}_delete`) //look within parent for a delete class?
     taskDltBtn.addEventListener('click', () => {
-        let projIndex = projectsList.projectArr.findIndex((x) => x.projId === +pId)
-        let taskIndex = projectsList.projectArr[projIndex].tasks.findIndex((x) => x.taskId === +id);
-        console.log(taskIndex)
+        let projIndex = projectsList.projectArr.findIndex((x) => x.projId === getProjectNum()); //how to get pId?
+        let taskIndex = projectsList.projectArr[projIndex].tasks.findIndex((x) => x.taskId === +task.taskId);//compare against task_id value?
         projectsList.projectArr[projIndex].tasks.splice(taskIndex, 1);
-        console.log(taskDltBtn.parentElement)
-        taskDltBtn.parentElement.remove();
+        taskDltBtn.parentElement.remove(); //careful when refactoring DOM tree
         
     })
 }
 
-        //on click it will look at the ID of the parent or maybe parent of parent? 
-            //find that proj obj, look in it's task list and use it's id to find that task obj and delete it
-            // it will delete the PARENT NODE from DOM
 
+// function addDeleteTask (id, pId) {
+//     let taskDltBtn = document.getElementById(`task_${id}_delete`) //look within parent for a delete class?
+//     taskDltBtn.addEventListener('click', () => {
+//         let projIndex = projectsList.projectArr.findIndex((x) => x.projId === +pId); //how to get pId?
+//         let taskIndex = projectsList.projectArr[projIndex].tasks.findIndex((x) => x.taskId === +id);//compare against task_id value
+//         projectsList.projectArr[projIndex].tasks.splice(taskIndex, 1);
+//         taskDltBtn.parentElement.remove(); //careful when refactoring DOM tree
+        
+//     })
+// }
 
-
+// function addTaskDOM (name, id, pId, parent) {
+//     let newTaskDiv = document.createElement('div');
+//     newTaskDiv.id = `${pId}_proj_${id}_task_div`;
+//     let newTask = 
+//         `<p>${name}</p>
+//         <button id='task_${id}_delete'>Delete</button>`;
+//     newTaskDiv.innerHTML = newTask;
+//     parent.appendChild(newTaskDiv);
+//     addDeleteTask(id, pId);
+// };
 
 addProjectMain('Default Project', 0);
 let defaultProj = document.getElementById('side_0_title');
