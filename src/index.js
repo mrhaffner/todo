@@ -1,6 +1,3 @@
-//todo properties
-    //minimum: description, dueDate and priority
-
 // separate your application logic (i.e. creating new todos, setting todos as complete, changing todo priority etc.) from the DOM-related stuff, so keep all of those things in separate modules.
 
 //UI
@@ -143,7 +140,7 @@ function addProjectMain(name, id) { //get rid of the (name/id dependencies here 
 
 
 
-//reformulate so there is a form with 1 button (change new task to submit) that has entry for name, note, date, priority
+
 
 
 function addTaskBtn(id) {
@@ -207,17 +204,30 @@ function addTaskDOM(task) {
     let newTaskDiv = document.createElement('div');
     newTaskDiv.dataset.task_id = task.taskId;//do i need this?
     let newTask = 
-    `<p>${task.name}</p>
-    <p>${task.note}</p>
-    <p>${task.dueDate}</p>
-    <p>${task.priority}</p>
-    <button id='task_${task.taskId}_delete'>Delete</button>`;//???do I need this id?
+    `<span id='${task.taskId}_name'>${task.name}</span>
+    <button id='task_${task.taskId}_delete'>Delete</button>
+    <div id='${task.taskId}_details' class='details_container'>    
+        <p>${task.note}</p>
+        <p>${task.dueDate}</p>
+        <p>${task.priority}</p>
+    </div>`;
     newTaskDiv.innerHTML = newTask;
     let taskDiv = document.getElementById('task_container')
     taskDiv.appendChild(newTaskDiv);
     addDeleteTask(task);
+    addExpandBtn(task);
 }
 
+//add function to make an eventlistener on clicking the task name to expand the div containing the details 
+    //should be hidden by default (use a class? change the class from hidden to open and back on clicking)
+function addExpandBtn(task) {
+    let taskNameBtn = document.getElementById(`${task.taskId}_name`)
+    taskNameBtn.addEventListener('click', () => {
+        let detailsDiv = document.getElementById(`${task.taskId}_details`)
+        detailsDiv.style.display === 'block' ? detailsDiv.style.display = 'none' : detailsDiv.style.display = 'block'
+        console.log(detailsDiv.class)
+    })
+}
 
 function addDeleteTask (task) {//would be nice to make function for adding object to array and changing DOM
     let taskDltBtn = document.getElementById(`task_${task.taskId}_delete`)

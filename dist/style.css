@@ -22,3 +22,7 @@
     margin-left: 12%; /* Same as the width of the sidebar */
     padding: 0px 10px;
 }
+
+.details_container {
+    display: none;
+}
