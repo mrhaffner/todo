@@ -14,6 +14,7 @@
     //another holds what is loads in current project
 
 //if main is empty (there are now projects) when you create a new project, that project should appear in main
+//if project is currently loaded already, clicking on it in sidebar will not reload main
 
 const projectsList = (() => {
     const projectArr = [
@@ -207,25 +208,78 @@ function addTaskDOM(task) {
     `<span id='${task.taskId}_name'>${task.name}</span>
     <button id='task_${task.taskId}_delete'>Delete</button>
     <div id='${task.taskId}_details' class='details_container'>    
-        <p>${task.note}</p>
-        <p>${task.dueDate}</p>
-        <p>${task.priority}</p>
+        <span id='${task.taskId}_note_text'>${task.note}</span>
+        <input type="text" id='${task.taskId}_note_edit'>
+        <button id ='${task.taskId}_note_edit_btn'>Edit Note</button><br>
+        <span id='${task.taskId}_date_text'>${task.dueDate}</span>
+        <input type="text" id="${task.taskId}_date_edit">
+        <button id ='${task.taskId}_date_edit_btn'>Edit Date</button><br>
+        <span id='${task.taskId}_priority_text'>${task.priority}</span>
+        <input type="text" id="${task.taskId}_priority_edit">
+        <button id ='${task.taskId}_priority_edit_btn'>Edit Priority</button><br>
     </div>`;
     newTaskDiv.innerHTML = newTask;
     let taskDiv = document.getElementById('task_container')
     taskDiv.appendChild(newTaskDiv);
     addDeleteTask(task);
     addExpandBtn(task);
+    editButtons(task)
 }
 
-//add function to make an eventlistener on clicking the task name to expand the div containing the details 
-    //should be hidden by default (use a class? change the class from hidden to open and back on clicking)
+
+function editButtons(task) {
+    editNote(task)
+    editDate(task)
+    editPriority(task)
+}
+
+function editNote(task) {
+    const editBtn = document.getElementById(`${task.taskId}_note_edit_btn`);
+    editBtn.addEventListener('click', () => {
+        const nameEdit = document.getElementById(`${task.taskId}_note_edit`).value
+        let projIndex = projectsList.projectArr.findIndex((x) => x.projId === getProjectNum());
+        let taskIndex = projectsList.projectArr[projIndex].tasks.findIndex((x) => x.taskId === +task.taskId);
+        projectsList.projectArr[projIndex].tasks[taskIndex].note = nameEdit;
+        document.getElementById(`${task.taskId}_note_text`).innerHTML = nameEdit;
+    })
+}
+
+function editDate(task) {
+    const editBtn = document.getElementById(`${task.taskId}_date_edit_btn`);
+    editBtn.addEventListener('click', () => {
+        const dateEdit = document.getElementById(`${task.taskId}_date_edit`).value
+        let projIndex = projectsList.projectArr.findIndex((x) => x.projId === getProjectNum());
+        let taskIndex = projectsList.projectArr[projIndex].tasks.findIndex((x) => x.taskId === +task.taskId);
+        projectsList.projectArr[projIndex].tasks[taskIndex].dueDate = dateEdit;
+        document.getElementById(`${task.taskId}_date_text`).innerHTML = dateEdit;
+    })
+}
+
+function editPriority(task) {
+    const editBtn = document.getElementById(`${task.taskId}_priority_edit_btn`);
+    editBtn.addEventListener('click', () => {
+        const priorityEdit = document.getElementById(`${task.taskId}_priority_edit`).value
+        let projIndex = projectsList.projectArr.findIndex((x) => x.projId === getProjectNum());
+        let taskIndex = projectsList.projectArr[projIndex].tasks.findIndex((x) => x.taskId === +task.taskId);
+        projectsList.projectArr[projIndex].tasks[taskIndex].priority = priorityEdit;
+        document.getElementById(`${task.taskId}_priority_text`).innerHTML = priorityEdit;
+    })
+}
+
+
+
+
+
+
+
+
+
+
 function addExpandBtn(task) {
     let taskNameBtn = document.getElementById(`${task.taskId}_name`)
     taskNameBtn.addEventListener('click', () => {
         let detailsDiv = document.getElementById(`${task.taskId}_details`)
         detailsDiv.style.display === 'block' ? detailsDiv.style.display = 'none' : detailsDiv.style.display = 'block'
-        console.log(detailsDiv.class)
     })
 }
 
