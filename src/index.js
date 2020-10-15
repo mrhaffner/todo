@@ -57,9 +57,9 @@ function addProject(project) {
     projectsList.projectArr.push(project)
 }
 
-const Task = (name, id) => {
+const Task = (id, name, note, dueDate, priority) => {
     const taskId = id;
-    return { name, taskId };
+    return { taskId, name, note, dueDate, priority };
 };
 
 
@@ -93,7 +93,7 @@ function addDeleteProj(id, parent) {
         let objIndex = projectsList.projectArr.findIndex((x) => x === +id);
         projectsList.projectArr.slice(objIndex, 1);
         parent.remove();
-        if (document.getElementById(`${id}_proj`)) {
+        if (document.getElementById(`${id}`)) {
             clearMain();
         };
     })
@@ -122,34 +122,47 @@ function addProjectMain(name, id) { //get rid of the (name/id dependencies here 
                     <h2 id="${id}_proj_title">${name}</h2>
                 </div>
                 <div id="${id}_proj_btn_div">
-                    <input type="text" id="${id}_proj_task_input">
-                    <button id="${id}_proj_btn">New Task</button>
+                    <span>Task Name</span>
+                    <input type="text" id="name_input"><br>
+                    <span>Notes</span>
+                    <input type="text" id="notes_input"><br>
+                    <span>Due Date</span>
+                    <input type="text" id="date_input"><br>
+                    <span>Priority</span>
+                    <input type="text" id="priority_input"><br>
+                    <button id="proj_btn">Submit</button>
                 </div>
             </div>
             <div id="task_container">
             </div>
         </div>`
     projMain.innerHTML = projectContents
-    const taskContainer = document.getElementById(`task_container`);//might not need this
-    //let currentProject = projectsList.projectArr.filter(obj => obj.projId === +id)[0];
-    //currentProject.tasks.forEach(task => addTaskDOM(task.name, task.taskId, id, taskContainer)); //this is wha tyou are replacing
     populateTasks();
-    addTaskBtn(id, taskContainer);//become part of populate tasks
+    addTaskBtn(id);
 };
 
-function addTaskBtn(id, task) {
-    const taskBtn = document.getElementById(`${id}_proj_btn`)
+
+
+//reformulate so there is a form with 1 button (change new task to submit) that has entry for name, note, date, priority
+
+
+function addTaskBtn(id) {
+    const taskBtn = document.getElementById(`proj_btn`)
     taskBtn.addEventListener('click', () => {
-        const inputText = document.getElementById(`${id}_proj_task_input`).value;
+        const nameInput = document.getElementById(`name_input`).value;
+        const notesInput = document.getElementById(`notes_input`).value;
+        const dateInput = document.getElementById(`date_input`).value;
+        const priorityInput = document.getElementById(`priority_input`).value;
         let projIndex = projectsList.projectArr.findIndex((x) => x.projId === +id);
         let addId = projectsList.projectArr[projIndex].currentTaskId;
         projectsList.projectArr[projIndex].currentTaskId ++;
-        projectsList.projectArr[projIndex].tasks.push(Task(inputText, addId));
-        //addTaskDOM(inputText, addId, id, task);//also want to replace this with just populateTasks
-        //remove tasks function or just populate main or keep addTaskDom and feed the correct task into it
+        projectsList.projectArr[projIndex].tasks.push(Task(addId, nameInput, notesInput, dateInput, priorityInput));
         populateTasks();
     })
 }
+
+
+
 
 
 //nothing should be fed into addTaskDom, it should read the appropariate task object and populate the tasks from there
@@ -179,9 +192,6 @@ function getProjectNum() {
 }
 
 function populateTasks() {
-    //function to remove tasks
-    //get the value of whatever the current open project is?
-    //remove
     clearTasks();
     projectsList.projectArr[getProjectNum()].tasks.forEach(x => addTaskDOM(x));
 }
@@ -209,11 +219,11 @@ function addTaskDOM(task) {
 }
 
 
-function addDeleteTask (task) {
-    let taskDltBtn = document.getElementById(`task_${task.taskId}_delete`) //look within parent for a delete class?
+function addDeleteTask (task) {//would be nice to make function for adding object to array and changing DOM
+    let taskDltBtn = document.getElementById(`task_${task.taskId}_delete`)
     taskDltBtn.addEventListener('click', () => {
-        let projIndex = projectsList.projectArr.findIndex((x) => x.projId === getProjectNum()); //how to get pId?
-        let taskIndex = projectsList.projectArr[projIndex].tasks.findIndex((x) => x.taskId === +task.taskId);//compare against task_id value?
+        let projIndex = projectsList.projectArr.findIndex((x) => x.projId === getProjectNum());
+        let taskIndex = projectsList.projectArr[projIndex].tasks.findIndex((x) => x.taskId === +task.taskId);
         projectsList.projectArr[projIndex].tasks.splice(taskIndex, 1);
         taskDltBtn.parentElement.remove(); //careful when refactoring DOM tree
         
@@ -221,27 +231,6 @@ function addDeleteTask (task) {
 }
 
 
-// function addDeleteTask (id, pId) {
-//     let taskDltBtn = document.getElementById(`task_${id}_delete`) //look within parent for a delete class?
-//     taskDltBtn.addEventListener('click', () => {
-//         let projIndex = projectsList.projectArr.findIndex((x) => x.projId === +pId); //how to get pId?
-//         let taskIndex = projectsList.projectArr[projIndex].tasks.findIndex((x) => x.taskId === +id);//compare against task_id value
-//         projectsList.projectArr[projIndex].tasks.splice(taskIndex, 1);
-//         taskDltBtn.parentElement.remove(); //careful when refactoring DOM tree
-        
-//     })
-// }
-
-// function addTaskDOM (name, id, pId, parent) {
-//     let newTaskDiv = document.createElement('div');
-//     newTaskDiv.id = `${pId}_proj_${id}_task_div`;
-//     let newTask = 
-//         `<p>${name}</p>
-//         <button id='task_${id}_delete'>Delete</button>`;
-//     newTaskDiv.innerHTML = newTask;
-//     parent.appendChild(newTaskDiv);
-//     addDeleteTask(id, pId);
-// };
 
 addProjectMain('Default Project', 0);
 let defaultProj = document.getElementById('side_0_title');
