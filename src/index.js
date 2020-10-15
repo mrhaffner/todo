@@ -1,8 +1,5 @@
 // separate your application logic (i.e. creating new todos, setting todos as complete, changing todo priority etc.) from the DOM-related stuff, so keep all of those things in separate modules.
 
-//UI
-    //expand a single todo to see/edit its details
-
 //Use localStorage to save user’s projects and todos between sessions.??????????????
 
 //Since you are probably already using webpack, adding external libraries from npm is a cinch! You might want to consider using the following useful library in your code:
@@ -15,6 +12,11 @@
 
 //if main is empty (there are now projects) when you create a new project, that project should appear in main
 //if project is currently loaded already, clicking on it in sidebar will not reload main
+
+// localStorage.getItem()
+// localStorage.setItem()
+// maybe add event listener to the page that on click updates the localstorage?
+// also need to figure out how to load it 
 
 const projectsList = (() => {
     const projectArr = [
@@ -44,6 +46,7 @@ const projectsList = (() => {
     return { projectArr, currentId };
 })();
 
+
 const Project = (name, id) => {
     const projId = id;
     const currentTaskId = 0;
@@ -69,10 +72,30 @@ submitBtn.addEventListener('click', () => {
     let inputId = projectsList.currentId
     projectsList.currentId ++;
     projectsList.projectArr.push(Project(inputName, inputId));
-    addProjectSide(inputName, inputId);
+    addProjectSide();
 })
 
-function addProjectSide(name, id) {
+// function addProjectSide(name, id) {
+//     const sideNode = document.getElementById('side_proj_div');
+//     let newDiv = document.createElement('div')
+//     newDiv.id = `side_${id}_div`
+//     let newProject = 
+//         `<h3 id=side_${id}_title">${name}</h3>
+//         <button id="side_${id}_delete">Delete</button>`;
+//     newDiv.innerHTML = newProject;
+//     sideNode.appendChild(newDiv);
+//     addProjectBtn(newDiv.firstChild, name, id); //might need to change this to something other than .firstChild when you reorganize the DOM tree!!!!!!!
+//     addDeleteProj(id, newDiv)
+//     }; 
+
+
+function addProjectSide() {
+    clearSide()
+    //loop through projects and add to DOM with addSideDOM()
+    projectsList.projectArr.forEach(x => addSideDOM(x.name, x.projId))
+    }; 
+
+function addSideDOM(name, id) {
     const sideNode = document.getElementById('side_proj_div');
     let newDiv = document.createElement('div')
     newDiv.id = `side_${id}_div`
@@ -83,13 +106,20 @@ function addProjectSide(name, id) {
     sideNode.appendChild(newDiv);
     addProjectBtn(newDiv.firstChild, name, id); //might need to change this to something other than .firstChild when you reorganize the DOM tree!!!!!!!
     addDeleteProj(id, newDiv)
-    }; 
+}
+
+function clearSide() {
+    const projSide = document.getElementById('side_proj_div')
+    while (projSide.firstChild) {
+        projSide.removeChild(projSide.firstChild);
+    } 
+}
 
 function addDeleteProj(id, parent) {
     const dBtn = document.getElementById(`side_${id}_delete`)
     dBtn.addEventListener('click', () => {
         let objIndex = projectsList.projectArr.findIndex((x) => x === +id);
-        projectsList.projectArr.slice(objIndex, 1);
+        projectsList.projectArr.splice(objIndex, 1);
         parent.remove();
         if (document.getElementById(`${id}`)) {
             clearMain();
@@ -266,15 +296,6 @@ function editPriority(task) {
     })
 }
 
-
-
-
-
-
-
-
-
-
 function addExpandBtn(task) {
     let taskNameBtn = document.getElementById(`${task.taskId}_name`)
     taskNameBtn.addEventListener('click', () => {
@@ -290,14 +311,13 @@ function addDeleteTask (task) {//would be nice to make function for adding objec
         let taskIndex = projectsList.projectArr[projIndex].tasks.findIndex((x) => x.taskId === +task.taskId);
         projectsList.projectArr[projIndex].tasks.splice(taskIndex, 1);
         taskDltBtn.parentElement.remove(); //careful when refactoring DOM tree
-        
     })
 }
 
 
-
-addProjectMain('Default Project', 0);
-let defaultProj = document.getElementById('side_0_title');
-addProjectBtn(defaultProj, 'Default Project', 0); /*probably make this so it get from the object or not*/
-addDeleteProj(0, defaultProj.parentElement)
+addProjectSide()
+addProjectMain('Default Project', 0); //this needs to change
+//let defaultProj = document.getElementById('side_0_title');
+//addProjectBtn(defaultProj, 'Default Project', 0); /*probably make this so it get from the object or not*/
+//addDeleteProj(0, defaultProj.parentElement)
 //maybe make a function that does all this shit/make the default proj in sidebar be generated on load
