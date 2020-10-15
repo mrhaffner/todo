@@ -75,23 +75,9 @@ submitBtn.addEventListener('click', () => {
     addProjectSide();
 })
 
-// function addProjectSide(name, id) {
-//     const sideNode = document.getElementById('side_proj_div');
-//     let newDiv = document.createElement('div')
-//     newDiv.id = `side_${id}_div`
-//     let newProject = 
-//         `<h3 id=side_${id}_title">${name}</h3>
-//         <button id="side_${id}_delete">Delete</button>`;
-//     newDiv.innerHTML = newProject;
-//     sideNode.appendChild(newDiv);
-//     addProjectBtn(newDiv.firstChild, name, id); //might need to change this to something other than .firstChild when you reorganize the DOM tree!!!!!!!
-//     addDeleteProj(id, newDiv)
-//     }; 
-
 
 function addProjectSide() {
     clearSide()
-    //loop through projects and add to DOM with addSideDOM()
     projectsList.projectArr.forEach(x => addSideDOM(x.name, x.projId))
     }; 
 
@@ -124,6 +110,7 @@ function addDeleteProj(id, parent) {
         if (document.getElementById(`${id}`)) {
             clearMain();
         };
+        addProjectSide()
     })
 }
 
@@ -188,30 +175,6 @@ function addTaskBtn(id) {
         populateTasks();
     })
 }
-
-
-
-
-
-//nothing should be fed into addTaskDom, it should read the appropariate task object and populate the tasks from there
-// let taskPId = function() {
-
-// }
-// let taskId = function() {
-    
-// }
-// let taskName = function() {
-    
-// }
-// let taskNote = function() {
-    
-// }
-// let taskDueDate = function() {
-    
-// }
-// let taskPriority = function() {
-    
-// }
 
 function getProjectNum() {
     let projNum = document.getElementById('proj_div').firstElementChild.id;
@@ -320,4 +283,4 @@ addProjectMain('Default Project', 0); //this needs to change
 //let defaultProj = document.getElementById('side_0_title');
 //addProjectBtn(defaultProj, 'Default Project', 0); /*probably make this so it get from the object or not*/
 //addDeleteProj(0, defaultProj.parentElement)
-//maybe make a function that does all this shit/make the default proj in sidebar be generated on load
+//maybe make a function that does all this shit
