@@ -135,9 +135,12 @@ function addProjectMain(name, id) { /*get rid of the (name/id dependencies here 
 function addTaskDOM (name, id, pId, parent) {
     let newTaskDiv = document.createElement('div');
     newTaskDiv.id = `${pId}_proj_${id}_task_div`;
-    let newTask = `<p>${name}</p>`;
+    let newTask = 
+        `<p>${name}</p>
+        <button id='task_${id}_delete'>Delete</button>`;
     newTaskDiv.innerHTML = newTask;
     parent.appendChild(newTaskDiv);
+    addDeleteTask(id, pId);
 };
 
 
@@ -152,6 +155,24 @@ function addTaskBtn(id, task) {
         addTaskDOM(inputText, addId, id, task);
     })
 }
+
+function addDeleteTask (id, pId) {
+    let taskDltBtn = document.getElementById(`task_${id}_delete`)
+    taskDltBtn.addEventListener('click', () => {
+        let projIndex = projectsList.projectArr.findIndex((x) => x.projId === +pId)
+        let taskIndex = projectsList.projectArr[projIndex].tasks.findIndex((x) => x.taskId === +id);
+        console.log(taskIndex)
+        projectsList.projectArr[projIndex].tasks.splice(taskIndex, 1);
+        console.log(taskDltBtn.parentElement)
+        taskDltBtn.parentElement.remove();
+        
+    })
+}
+
+        //on click it will look at the ID of the parent or maybe parent of parent? 
+            //find that proj obj, look in it's task list and use it's id to find that task obj and delete it
+            // it will delete the PARENT NODE from DOM
+
 
 
 
