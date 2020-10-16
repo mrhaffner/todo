@@ -13,13 +13,34 @@
 //if main is empty (there are now projects) when you create a new project, that project should appear in main
 //if project is currently loaded already, clicking on it in sidebar will not reload main
 
+//change index.html javascript file
+
 // localStorage.getItem()
 // localStorage.setItem()
 // maybe add event listener to the page that on click updates the localstorage?
 // also need to figure out how to load it 
 
+function getStorage() {
+    projectsList.projectArr = JSON.parse(window.localStorage.getItem('arrKey'))
+    projectsList.currentId = JSON.parse(window.localStorage.getItem('idKey'))
+}
+//might need to rerender after calling? upon loading???
+//run addProjectSide()
+    //run addProjectMain()
+        //simple is to just load the first object in array
+        //advanced is to store what project was open in local storage(this will be the default setting, at the bottom), then plug that into addProjectMain
+            //if there are no projects in array, then do not run these, especially addProjectMain
+
+//use setters and getters to do this????
+function setStorage() {
+    let stringArr = JSON.stringify(projectsList.projectArr);
+    window.localStorage.setItem('arrKey', stringArr);
+    let stringId = JSON.stringify(projectsList.currentId);
+    window.localStorage.setItem('idKey', stringId);
+}
+
 const projectsList = (() => {
-    const projectArr = [
+    let projectArr = [
         {
             name: 'Default Project',
             projId: 0,
@@ -46,7 +67,6 @@ const projectsList = (() => {
     return { projectArr, currentId };
 })();
 
-
 const Project = (name, id) => {
     const projId = id;
     const currentTaskId = 0;
@@ -72,6 +92,7 @@ submitBtn.addEventListener('click', () => {
     let inputId = projectsList.currentId
     projectsList.currentId ++;
     projectsList.projectArr.push(Project(inputName, inputId));
+    setStorage()
     addProjectSide();
 })
 
@@ -106,6 +127,7 @@ function addDeleteProj(id, parent) {
     dBtn.addEventListener('click', () => {
         let objIndex = projectsList.projectArr.findIndex((x) => x === +id);
         projectsList.projectArr.splice(objIndex, 1);
+        setStorage()
         parent.remove();
         if (document.getElementById(`${id}`)) {
             clearMain();
@@ -156,11 +178,6 @@ function addProjectMain(name, id) { //get rid of the (name/id dependencies here 
     addTaskBtn(id);
 };
 
-
-
-
-
-
 function addTaskBtn(id) {
     const taskBtn = document.getElementById(`proj_btn`)
     taskBtn.addEventListener('click', () => {
@@ -172,6 +189,7 @@ function addTaskBtn(id) {
         let addId = projectsList.projectArr[projIndex].currentTaskId;
         projectsList.projectArr[projIndex].currentTaskId ++;
         projectsList.projectArr[projIndex].tasks.push(Task(addId, nameInput, notesInput, dateInput, priorityInput));
+        setStorage()
         populateTasks();
     })
 }
@@ -219,7 +237,6 @@ function addTaskDOM(task) {
     editButtons(task)
 }
 
-
 function editButtons(task) {
     editNote(task)
     editDate(task)
@@ -233,6 +250,7 @@ function editNote(task) {
         let projIndex = projectsList.projectArr.findIndex((x) => x.projId === getProjectNum());
         let taskIndex = projectsList.projectArr[projIndex].tasks.findIndex((x) => x.taskId === +task.taskId);
         projectsList.projectArr[projIndex].tasks[taskIndex].note = nameEdit;
+        setStorage()
         document.getElementById(`${task.taskId}_note_text`).innerHTML = nameEdit;
     })
 }
@@ -244,6 +262,7 @@ function editDate(task) {
         let projIndex = projectsList.projectArr.findIndex((x) => x.projId === getProjectNum());
         let taskIndex = projectsList.projectArr[projIndex].tasks.findIndex((x) => x.taskId === +task.taskId);
         projectsList.projectArr[projIndex].tasks[taskIndex].dueDate = dateEdit;
+        setStorage()
         document.getElementById(`${task.taskId}_date_text`).innerHTML = dateEdit;
     })
 }
@@ -255,6 +274,7 @@ function editPriority(task) {
         let projIndex = projectsList.projectArr.findIndex((x) => x.projId === getProjectNum());
         let taskIndex = projectsList.projectArr[projIndex].tasks.findIndex((x) => x.taskId === +task.taskId);
         projectsList.projectArr[projIndex].tasks[taskIndex].priority = priorityEdit;
+        setStorage()
         document.getElementById(`${task.taskId}_priority_text`).innerHTML = priorityEdit;
     })
 }
@@ -273,13 +293,15 @@ function addDeleteTask (task) {//would be nice to make function for adding objec
         let projIndex = projectsList.projectArr.findIndex((x) => x.projId === getProjectNum());
         let taskIndex = projectsList.projectArr[projIndex].tasks.findIndex((x) => x.taskId === +task.taskId);
         projectsList.projectArr[projIndex].tasks.splice(taskIndex, 1);
+        setStorage()
         taskDltBtn.parentElement.remove(); //careful when refactoring DOM tree
     })
 }
 
-
+getStorage()
 addProjectSide()
-addProjectMain('Default Project', 0); //this needs to change
+//find first object in array, get it's values, plug them into addProjectMain (unless there are not)
+addProjectMain('Default Project', 0); 
 //let defaultProj = document.getElementById('side_0_title');
 //addProjectBtn(defaultProj, 'Default Project', 0); /*probably make this so it get from the object or not*/
 //addDeleteProj(0, defaultProj.parentElement)
