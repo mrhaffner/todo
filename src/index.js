@@ -15,10 +15,6 @@
 
 //change index.html javascript file
 
-// localStorage.getItem()
-// localStorage.setItem()
-// maybe add event listener to the page that on click updates the localstorage?
-// also need to figure out how to load it 
 
 function getStorage() {
     projectsList.projectArr = JSON.parse(window.localStorage.getItem('arrKey'))
@@ -164,7 +160,7 @@ function addProjectMain(name, id) { //get rid of the (name/id dependencies here 
                     <span>Notes</span>
                     <input type="text" id="notes_input"><br>
                     <span>Due Date</span>
-                    <input type="text" id="date_input"><br>
+                    <input type="date" id="date_input"><br>
                     <span>Priority</span>
                     <input type="text" id="priority_input"><br>
                     <button id="proj_btn">Submit</button>
@@ -177,6 +173,8 @@ function addProjectMain(name, id) { //get rid of the (name/id dependencies here 
     populateTasks();
     addTaskBtn(id);
 };
+
+
 
 function addTaskBtn(id) {
     const taskBtn = document.getElementById(`proj_btn`)
@@ -195,9 +193,12 @@ function addTaskBtn(id) {
 }
 
 function getProjectNum() {
-    let projNum = document.getElementById('proj_div').firstElementChild.id;
-    let projIndex = projectsList.projectArr.findIndex((x) => x.projId === +projNum)
-    return projIndex;
+    //need to add to the if condition for if there is an object, but there is nothing populated in main or making main autopopulate if there are projects present)
+    if (projectsList.projectArr[0]){
+        let projNum = document.getElementById('proj_div').firstElementChild.id;
+        let projIndex = projectsList.projectArr.findIndex((x) => x.projId === +projNum);
+        return projIndex;
+    };
 }
 
 function populateTasks() {
@@ -223,7 +224,7 @@ function addTaskDOM(task) {
         <input type="text" id='${task.taskId}_note_edit'>
         <button id ='${task.taskId}_note_edit_btn'>Edit Note</button><br>
         <span id='${task.taskId}_date_text'>${task.dueDate}</span>
-        <input type="text" id="${task.taskId}_date_edit">
+        <input type="date" id="${task.taskId}_date_edit">
         <button id ='${task.taskId}_date_edit_btn'>Edit Date</button><br>
         <span id='${task.taskId}_priority_text'>${task.priority}</span>
         <input type="text" id="${task.taskId}_priority_edit">
@@ -247,7 +248,7 @@ function editNote(task) {
     const editBtn = document.getElementById(`${task.taskId}_note_edit_btn`);
     editBtn.addEventListener('click', () => {
         const nameEdit = document.getElementById(`${task.taskId}_note_edit`).value
-        let projIndex = projectsList.projectArr.findIndex((x) => x.projId === getProjectNum());
+        let projIndex = projectsList.projectArr.findIndex((x) => x.projId === +document.getElementById('proj_div').firstElementChild.id);
         let taskIndex = projectsList.projectArr[projIndex].tasks.findIndex((x) => x.taskId === +task.taskId);
         projectsList.projectArr[projIndex].tasks[taskIndex].note = nameEdit;
         setStorage()
@@ -259,7 +260,7 @@ function editDate(task) {
     const editBtn = document.getElementById(`${task.taskId}_date_edit_btn`);
     editBtn.addEventListener('click', () => {
         const dateEdit = document.getElementById(`${task.taskId}_date_edit`).value
-        let projIndex = projectsList.projectArr.findIndex((x) => x.projId === getProjectNum());
+        let projIndex = projectsList.projectArr.findIndex((x) => x.projId === +document.getElementById('proj_div').firstElementChild.id);
         let taskIndex = projectsList.projectArr[projIndex].tasks.findIndex((x) => x.taskId === +task.taskId);
         projectsList.projectArr[projIndex].tasks[taskIndex].dueDate = dateEdit;
         setStorage()
@@ -271,7 +272,7 @@ function editPriority(task) {
     const editBtn = document.getElementById(`${task.taskId}_priority_edit_btn`);
     editBtn.addEventListener('click', () => {
         const priorityEdit = document.getElementById(`${task.taskId}_priority_edit`).value
-        let projIndex = projectsList.projectArr.findIndex((x) => x.projId === getProjectNum());
+        let projIndex = projectsList.projectArr.findIndex((x) => x.projId === +document.getElementById('proj_div').firstElementChild.id);
         let taskIndex = projectsList.projectArr[projIndex].tasks.findIndex((x) => x.taskId === +task.taskId);
         projectsList.projectArr[projIndex].tasks[taskIndex].priority = priorityEdit;
         setStorage()
@@ -290,7 +291,7 @@ function addExpandBtn(task) {
 function addDeleteTask (task) {//would be nice to make function for adding object to array and changing DOM
     let taskDltBtn = document.getElementById(`task_${task.taskId}_delete`)
     taskDltBtn.addEventListener('click', () => {
-        let projIndex = projectsList.projectArr.findIndex((x) => x.projId === getProjectNum());
+        let projIndex = projectsList.projectArr.findIndex((x) => x.projId === +document.getElementById('proj_div').firstElementChild.id);
         let taskIndex = projectsList.projectArr[projIndex].tasks.findIndex((x) => x.taskId === +task.taskId);
         projectsList.projectArr[projIndex].tasks.splice(taskIndex, 1);
         setStorage()
@@ -301,8 +302,12 @@ function addDeleteTask (task) {//would be nice to make function for adding objec
 getStorage()
 addProjectSide()
 //find first object in array, get it's values, plug them into addProjectMain (unless there are not)
-addProjectMain('Default Project', 0); 
+    //make this a function you can call when a project is deleted???? might not want to do that
+if (projectsList.projectArr[0]) {
+    addProjectMain(projectsList.projectArr[0].name, projectsList.projectArr[0].projId)
+}
+
 //let defaultProj = document.getElementById('side_0_title');
-//addProjectBtn(defaultProj, 'Default Project', 0); /*probably make this so it get from the object or not*/
 //addDeleteProj(0, defaultProj.parentElement)
 //maybe make a function that does all this shit
+//main autopopulate if there are projects present (after the active one is deleted)
